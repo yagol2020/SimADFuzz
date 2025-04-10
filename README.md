@@ -4,6 +4,8 @@ SimADFuzz: Simulation-Feedback Fuzz Testing for Autonomous Driving Systems
 
 ![simadfuzz](assets/SimADFuzz.png)
 
+> The DOI for this repository is: 10.6084/m9.figshare.28769768
+
 ## Introduction
 
 SimADFuzz is a fuzz testing method for autonomous driving systems that generates diverse driving scenarios to detect
@@ -65,6 +67,14 @@ The system environment to set up SimADFuzz is as follows:
 
    ```shell
    mv xxx.pth InterFuser/team_code/interfuser.pth.tar
+   ```
+
+   Download model weights and others require files from LMDrive [repo](https://github.com/opendilab/LMDrive), move them into `team_code` dir.
+
+   ```shell
+   mv llava-v1.5-7b LMDrive/team_code/llava-v1.5-7b
+   mv llava-v1.5-checkpoint.pth LMDrive/team_code/llava-v1.5-checkpoint.pth
+   mv vision-encoder-r50.pth.tar LMDrive/team_code/vision-encoder-r50.pth.tar
    ```
 
    SimADFuzz depends on the Docker version of the CARLA simulator. Before pulling the Docker image for CARLA v0.9.13,
@@ -185,14 +195,16 @@ We provide the recorder to reproduce the night scenarios mentioned in our paper.
 | Collision      | Ego vehicle collides with another vehicle while changing lanes to exit a crossroads.                   | `paper_case_study/collision/2/`     | ![gif](paper_case_study/collision/2/oracles/front.gif) [Front-view](paper_case_study/collision/2/oracles/front.mp4); [Top-view](paper_case_study/collision/2/oracles/top.mp4)             |
 | Collision      | Ego vehicle collides with another vehicle while changing lanes at an intersection.                     | `paper_case_study/collision/3/`     | ![gif](paper_case_study/collision/3/oracles/front.gif) [Front-view](paper_case_study/collision/3/oracles/front.mp4); [Top-view](paper_case_study/collision/3/oracles/top.mp4)             |
 | Collision      | Ego vehicle collides with another vehicle due to insufficient steering while turning right.            | `paper_case_study/collision/4/`     | ![gif](paper_case_study/collision/4/oracles/front.gif) [Front-view](paper_case_study/collision/4/oracles/front.mp4); [Top-view](paper_case_study/collision/4/oracles/top.mp4)             |
-| Lane Invasion  | Ego vehicle illegally crosses the solid line while passing through an intersection.                    | `paper_case_study/lane_invasion/5/` | ![gif](paper_case_study/lane_invasion/5/oracles/front.gif) [Front-view](paper_case_study/lane_invasion/5/oracles/front.mp4); [Top-view](paper_case_study/lane_invasion/5/oracles/top.mp4) |
-| Lane Invasion  | Ego vehicle illegally crosses the solid line while turning right.                                      | `paper_case_study/lane_invasion/6/` | ![gif](paper_case_study/lane_invasion/6/oracles/front.gif) [Front-view](paper_case_study/lane_invasion/6/oracles/front.mp4); [Top-view](paper_case_study/lane_invasion/6/oracles/top.mp4) |
-| Stuck          | Ego vehicle failed to change lanes when the pedestrian in front remained stationary for too long.      | `paper_case_study/stuck/7/`         | ![gif](paper_case_study/stuck/7/oracles/front.gif) [Front-view](paper_case_study/stuck/7/oracles/front.mp4); [Top-view](paper_case_study/stuck/7/oracles/top.mp4)                         |
-| Stuck          | Ego vehicle misjudged the state of the traffic lights, resulting in being stuck on a downhill ramp.    | `paper_case_study/stuck/8/`         | ![gif](paper_case_study/stuck/8/oracles/front.gif) [Front-view](paper_case_study/stuck/8/oracles/front.mp4); [Top-view](paper_case_study/stuck/8/oracles/top.mp4)                         |
+| Collision      | Ego vehicle collides with roadside signboard due to misjudged lane markings.            | `paper_case_study/collision/5/`     | ![gif](paper_case_study/collision/5/fuzzerdata/output.gif) [Front-view](paper_case_study/collision/5/fuzzerdata/output.mp4); [Top-view](paper_case_study/collision/5/oracles/top.mp4)             |
+| Lane Invasion  | Ego vehicle illegally crosses the solid line while passing through an intersection.                    | `paper_case_study/lane_invasion/6/` | ![gif](paper_case_study/lane_invasion/5/oracles/front.gif) [Front-view](paper_case_study/lane_invasion/5/oracles/front.mp4); [Top-view](paper_case_study/lane_invasion/5/oracles/top.mp4) |
+| Lane Invasion  | Ego vehicle illegally crosses the solid line while turning right.                                      | `paper_case_study/lane_invasion/7/` | ![gif](paper_case_study/lane_invasion/6/oracles/front.gif) [Front-view](paper_case_study/lane_invasion/6/oracles/front.mp4); [Top-view](paper_case_study/lane_invasion/6/oracles/top.mp4) |
+| Stuck          | Ego vehicle failed to change lanes when the pedestrian in front remained stationary for too long.      | `paper_case_study/stuck/8/`         | ![gif](paper_case_study/stuck/7/oracles/front.gif) [Front-view](paper_case_study/stuck/7/oracles/front.mp4); [Top-view](paper_case_study/stuck/7/oracles/top.mp4)                         |
+| Stuck          | Ego vehicle misjudged the state of the traffic lights, resulting in being stuck on a downhill ramp.    | `paper_case_study/stuck/9/`         | ![gif](paper_case_study/stuck/8/oracles/front.gif) [Front-view](paper_case_study/stuck/8/oracles/front.mp4); [Top-view](paper_case_study/stuck/8/oracles/top.mp4)                         |
 
 ## Acknowledgment
 
 * InterFuser, [repo](https://github.com/opendilab/InterFuser)
+* LMDrive, [repo](https://github.com/opendilab/LMDrive)
 * AV-Fuzzer, [repo](https://github.com/cclinus/AV-Fuzzer)
 * DriveFuzz, [repo](https://gitlab.com/s3lab-code/public/drivefuzz)
 * TM-Fuzzer, [repo](https://github.com/ldegao/TMfuzz)

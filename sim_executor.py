@@ -32,7 +32,20 @@ if os.environ["ADS"] == "interfuser":
     from InterFuser.srunner.scenariomanager.carla_data_provider import (
         CarlaDataProvider as CarlaDataProvider_interfuser,
     )
-
+if os.environ["ADS"] == "lmdrive":
+    from LMDrive.team_code.lmdriver_agent import LMDriveAgent
+    from LMDrive.leaderboard.autoagents.agent_wrapper import (
+        AgentWrapper as AgentWrapper_lmdriver,
+    )
+    from LMDrive.srunner.scenariomanager.carla_data_provider import (
+        CarlaDataProvider as CarlaDataProvider_lmdriver,
+    )
+    from LMDrive.srunner.scenariomanager.timer import (
+        GameTime as GameTime_lmdriver,
+    )
+    from LMDrive.leaderboard.utils.route_manipulation import (
+        interpolate_trajectory as interpolate_trajectory_lmdriver,
+    )
 
 def location_pickle(location):
     return carla.Location, (location.x, location.y, location.z)
@@ -221,6 +234,11 @@ if __name__ == "__main__":
     if ads == "interfuser":
         CarlaDataProvider_interfuser.set_client(client)
         CarlaDataProvider_interfuser.set_world(world)
+    elif ads == "lmdrive":
+        CarlaDataProvider_lmdriver.cleanup()
+        CarlaDataProvider_lmdriver.set_client(client)
+        CarlaDataProvider_lmdriver.set_world(world)
+        GameTime_lmdriver.restart()
     #####################################################################################
     # Weather
     #####################################################################################
@@ -291,7 +309,12 @@ if __name__ == "__main__":
     #####################################################################################
     ego_sp, ego_dp = json_2_transform(ego_json, only_sp=False)
     ego_agent = None
-    ego = world.try_spawn_actor(ego_bp, ego_sp)
+    if ads == "lmdrive":
+        ego = CarlaDataProvider_lmdriver.request_new_actor(
+            ego_bp.id, ego_sp, rolename="hero"
+        )
+    else:
+        ego = world.try_spawn_actor(ego_bp, ego_sp)
     if ego is None:
         print("Error in spawn ego")
         sys.exit(-1)
@@ -311,6 +334,24 @@ if __name__ == "__main__":
         ego_agent = BehaviorAgent(vehicle=ego, behavior="cautious")
         ego_agent.set_destination(start_location=ego_sp.location, end_location=ego_dp.location)
         ego_agent._update_information()
+    elif ads == "lmdrive":
+        world.tick()  # sync once with simulator
+        ego.set_simulate_physics(True)
+
+        ego_agent = LMDriveAgent(
+            "LMDrive/team_code/lmdriver_config.py"
+        )
+        ego_agent.town_id = town.replace("Carla/Maps/", "")
+        ego_agent.sampled_scenarios = []
+        ego_agent.scenario_cofing_name = str(random.randint(1, 2025))
+        ego_sp1 = carla.Location(x=ego_sp.location.x, y=ego_sp.location.y, z=ego_sp.location.z)
+        ego_dp1 = carla.Location(x=ego_dp.location.x, y=ego_dp.location.y, z=ego_dp.location.z)
+        trajectory = [ego_sp1, ego_dp1]
+        gps_route, route = interpolate_trajectory_lmdriver(world, trajectory)
+        ego_agent.set_global_plan(gps_route, route)
+        ego_agent._hic.start_recording()
+        agent_wrapper = AgentWrapper_lmdriver(ego_agent)
+        agent_wrapper.setup_sensors(ego)
     vehicle_list.append(("ego", ego, ego_agent))
     print("Spawn Ego vehicle", ego)
     #####################################################################################
@@ -440,6 +481,8 @@ if __name__ == "__main__":
         state.num_frames = cur_frame_id - state.first_frame_id
         if ads == "interfuser":
             GameTime_interfuser.on_carla_tick(timestamp)
+        if ads == "lmdrive":
+            GameTime_lmdriver.on_carla_tick(timestamp)
         #######################################################
         # Run each vehicle controller and collect feedback infos
         #######################################################
@@ -453,6 +496,8 @@ if __name__ == "__main__":
                 elif ads == "behavior":
                     player_controller._update_information()
                     control = player_controller.run_step()
+                elif ads == "lmdrive":
+                    control = player_controller()
             else:  # for NPC, all is behavior
                 try:
                     player_controller._update_information()
@@ -558,6 +603,10 @@ if __name__ == "__main__":
                 state.early_stop_reason = "Ego has no more route"
         if ads == "behavior":
             if len(ego_agent.get_local_planner()._waypoints_queue) == 0:
+                state.early_stop = True
+                state.early_stop_reason = "Ego has no more waypoints"
+        if ads == "lmdrive":
+            if len(ego_agent._route_planner.route) == 0:
                 state.early_stop = True
                 state.early_stop_reason = "Ego has no more waypoints"
         #############################################################################

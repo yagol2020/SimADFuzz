@@ -495,7 +495,12 @@ def mate_scenario(scenario1, scenario2):
     for idx in swap_walker_idx:
         # 交换相同位置的 walkers
         scenario1.walker[idx], scenario2.walker[idx] = scenario2.walker[idx], scenario1.walker[idx]
-    #######################################################################################
+    ########################################################################################
+    assert scenario1.weather.keys() == scenario2.weather.keys()
+    for wc in scenario1.weather.keys():
+        if random.random() > 0.5:
+            scenario1.weather[wc], scenario2.weather[wc] = scenario2.weather[wc], scenario1.weather[wc]
+    ########################################################################################
     assert scenario1.npc_num == scenario2.npc_num
     assert len(scenario1.walker) == len(scenario2.walker) == scenario1.walker_num == scenario2.walker_num
     #######################################################################################

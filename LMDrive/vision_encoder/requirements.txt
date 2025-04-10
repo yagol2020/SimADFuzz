@@ -1,0 +1,8 @@
+torch
+torchvision
+pyyaml
+scikit-image
+opencv-python
+# torch_scatter
+tqdm
+py_trees

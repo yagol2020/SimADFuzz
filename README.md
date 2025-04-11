@@ -185,6 +185,14 @@ about InterFuser:
 python reply.py --simadfuzz-recorder --simadfuzz-recorder-dir paper_case_study/collision/1
 ```
 
+## Similar Scenarios
+
+We construct two similar scenarios to demonstrate the effectiveness of SimADFuzz. The code to genreate these scenarios is provided in `paper_case_study/similar_scenarios`.
+
+| S1 | S2 (more risky) |
+|----|-----------------|
+|![gif](paper_case_study/similar_scenarios/s1.gif) | ![gif](paper_case_study/similar_scenarios/s2.gif)|
+
 ## Case Study
 
 We provide the recorder to reproduce the night scenarios mentioned in our paper.
@@ -200,6 +208,9 @@ We provide the recorder to reproduce the night scenarios mentioned in our paper.
 | Lane Invasion  | Ego vehicle illegally crosses the solid line while turning right.                                      | `paper_case_study/lane_invasion/7/` | ![gif](paper_case_study/lane_invasion/6/oracles/front.gif) [Front-view](paper_case_study/lane_invasion/6/oracles/front.mp4); [Top-view](paper_case_study/lane_invasion/6/oracles/top.mp4) |
 | Stuck          | Ego vehicle failed to change lanes when the pedestrian in front remained stationary for too long.      | `paper_case_study/stuck/8/`         | ![gif](paper_case_study/stuck/7/oracles/front.gif) [Front-view](paper_case_study/stuck/7/oracles/front.mp4); [Top-view](paper_case_study/stuck/7/oracles/top.mp4)                         |
 | Stuck          | Ego vehicle misjudged the state of the traffic lights, resulting in being stuck on a downhill ramp.    | `paper_case_study/stuck/9/`         | ![gif](paper_case_study/stuck/8/oracles/front.gif) [Front-view](paper_case_study/stuck/8/oracles/front.mp4); [Top-view](paper_case_study/stuck/8/oracles/top.mp4)                         |
+
+
+
 
 ## Acknowledgment
 
